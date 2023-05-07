@@ -18,11 +18,11 @@ module CairoTools
 using LinearAlgebra
 using ..Cairo
 using ..Colors
-using ..VeryBasic
+using ..BoxPoints
 
 
 
-export Drawable, ImageDrawable, LineStyle, PDFDrawable, Pik, RecorderDrawable, SVGDrawable, cairo_memory_surface_ctx, circle, closepdfsurface, closepngsurface, closesurface, curve, curve_between, draw, drawimage, drawimage_to_mask, get_text_info, line, line_to, makepdfsurface, makepngsurface, makesurface, move_to, oblong, over, polygon, rect, set_linestyle, source, star, stroke, text, triangle
+export Drawable, ImageDrawable, LineStyle, PDFDrawable, Pik, RecorderDrawable, SVGDrawable, cairo_memory_surface_ctx, circle, closepdfsurface, closepngsurface, closesurface, curve, curve_between, draw, drawimage, drawimage_to_mask, get_text_info, line, line_to, makepdfsurface, makepngsurface, makesurface, move_to, oblong, over, paint, polygon, rect, save, set_linestyle, source, star, stroke, text, triangle
 
 ##############################################################################
 abstract type Drawable
@@ -114,7 +114,7 @@ function Cairo.text(ctx::CairoContext, p::Point, fsize, fcolor, txt; horizontal 
     p = p - Point(dx, dy)
     textx(ctx, p, fsize, fcolor, txt)
 end
-Cairo.text(dw::Drawable, p, fsize, fcolor, txt; horizontal = "left", vertical="baseline") = text(dw.ctx, p, fsize, fcolor, txt; horizontal, vertical)
+Cairo.text(dw::Drawable, args...; kw...) = text(dw.ctx, args...; kw...)
            
 ##############################################################################
 # surface functions
@@ -191,10 +191,21 @@ end
 Close the Cairo surface and write output.
 """
 function Base.close(dw::Drawable) 
-    Cairo.finish(dw.surface)
-    Cairo.destroy(dw.surface)
-    Cairo.destroy(dw.ctx)
+    finish(dw.surface)
+    destroy(dw.surface)
+    destroy(dw.ctx)
 end
+
+function Base.close(dw::ImageDrawable)
+    write_to_png(dw.surface, dw.fname)
+    finish(dw.surface)
+    destroy(dw.surface)
+    destroy(dw.ctx)
+end
+
+
+
+
 
 """
     get_scale(ctx)
@@ -517,7 +528,7 @@ function drawimage_x(ctx::CairoContext, pik::Pik, x, y, width, height; centered 
     Cairo.fill(ctx)
     Cairo.restore(ctx)
 end
-drawimage_x(dw::Drawable, pik::Pik, x, y, width, height; kw...) = drawimage_x(dw.ctx, pik, x, y, width, height; kw...)
+drawimage_x(dw::Drawable, args...; kw...) = drawimage_x(dw.ctx, args...; kw...)
 
 
 ##############################################################################
@@ -526,38 +537,22 @@ drawimage_x(dw::Drawable, pik::Pik, x, y, width, height; kw...) = drawimage_x(dw
 
 # output to a context
 # p = location of top-left of r in destination coords
-function Cairo.paint(ctx, r::RecorderDrawable, p = Point(0,0), scale=1.0)
-    Cairo.save(ctx)
-    Cairo.scale(ctx, scale, scale)
-    set_source_surface(ctx, r.surface, p.x/scale, p.y/scale)
+function Cairo.paint(ctx::CairoContext, r::RecorderDrawable, p = Point(0,0), scalefactor = 1.0)
+    save(ctx)
+    scale(ctx, scalefactor, scalefactor)
+    set_source_surface(ctx, r.surface, p.x/scalefactor, p.y/scalefactor)
     paint(ctx)
-    Cairo.restore(ctx)
-
-    #Cairo.finish(r.surface)
-    #Cairo.destroy(r.surface)
-    #Cairo.destroy(r.ctx)
-    # rely on the finalizer in Cairo.jl to kill the ctx
+    restore(ctx)
 end
-Cairo.paint(dest::Drawable, dw::RecorderDrawable, p = Point(0,0), scale=1.0) = paint(dest.ctx, dw, p, scale)
+Cairo.paint(dest::Drawable, args...) = paint(dest.ctx, args...)
 
 
 # output to a file
-#
-# needs a scale option
 function Cairo.save(r::RecorderDrawable, fname, scale=1)
-    surface2, ctx2 = Drawable(scale*r.width, scale*r.height, fname)
-    Cairo.scale(ctx2, scale, scale)
-    paint(ctx2, r, Point(0,0))
-    closesurface(surface2, fname)
-
-    Cairo.finish(surface2)
-    Cairo.destroy(surface2)
-    Cairo.destroy(ctx2)
-    #close(r)
-    #Cairo.finish(r.surface)
-    #Cairo.destroy(r.surface)
-    #Cairo.destroy(r.ctx)
-    # rely on the finalizer in Cairo.jl to kill the ctx
+    dw = Drawable(scale*r.width, scale*r.height, fname)
+    Cairo.scale(dw.ctx, scale, scale)
+    paint(dw, r)
+    close(dw)
 end
 
 

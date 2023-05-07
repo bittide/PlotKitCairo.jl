@@ -28,8 +28,8 @@ using .Tools
 include("colors.jl")
 using .Colors
 
-include("verybasic.jl")
-using .VeryBasic
+include("boxpoints.jl")
+using .BoxPoints
 
 include("cairotools.jl")
 using .CairoTools
@@ -45,7 +45,7 @@ end
 
 reexport(Tools)
 reexport(Colors)
-reexport(VeryBasic)
+reexport(BoxPoints)
 reexport(CairoTools)
 
 

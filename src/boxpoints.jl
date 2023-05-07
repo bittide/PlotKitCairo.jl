@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-module VeryBasic
+module BoxPoints
 
 using LinearAlgebra
 using ..Tools
