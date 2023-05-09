@@ -174,15 +174,24 @@ end
 
 Create a Cairo surface with given width/height. Determine type from the file extension.
 """
-function Drawable(width, height, fname)
-    if lowercase(fname[end-2:end]) == "png"
-        dw = ImageDrawable(width, height, fname)
-    elseif lowercase(fname[end-2:end]) == "svg"
-        dw = SVGDrawable(width, height, fname)
-    else
-        dw = PDFDrawable(width, height, fname)
+function Drawable(width, height; fname = nothing)
+    if isnothing(fname)
+        return RecorderDrawable(width, height)
     end
-    return dw
+    
+    if lowercase(fname[end-2:end]) == "png"
+        return  ImageDrawable(width, height, fname)
+    end
+
+    if lowercase(fname[end-2:end]) == "svg"
+        return SVGDrawable(width, height, fname)
+    end
+    
+    if lowercase(fname[end-2:end]) == "pdf"
+        return PDFDrawable(width, height, fname)
+    end
+
+    println("ERROR: need valid filename to create drawable")
 end
 
 """
@@ -394,7 +403,7 @@ function Cairo.circle(ctx::CairoContext, p::Point, r; linestyle = nothing, fillc
     Cairo.arc(ctx, p, r, 0, 2*pi)
     draw(ctx; closed=true, linestyle, fillcolor)
 end
-circle(dw::Drawable, p, r; kw...) = circle(dw.ctx, p, r; kw...)
+Cairo.circle(dw::Drawable, p, r; kw...) = circle(dw.ctx, p, r; kw...)
 
 """
     curve(ctx, p0, p1, p2, p3; closed, linestyle, fillcolor)
