@@ -16,7 +16,7 @@ function main1()
     height = 600
     fname = plotpath("pkcairo1.png")
     # drawing
-    dw = Drawable(width, height, fname)
+    dw = Drawable(width, height; fname)
     rect(dw, Point(0,0), Point(800, 600); fillcolor = Color(1,0.8,0.9))
     line(dw, Point(10, 20), Point(800, 450); linestyle = LineStyle(Color(:blue), 5))
     line(dw, Point(10, 500), Point(600, 50); linestyle = LineStyle(Color(0,0.7,0.3), 5))
@@ -38,7 +38,7 @@ function main2()
     height = 600
     fname = plotpath("pkcairo2.pdf")
     # drawing
-    dw = Drawable(width, height, fname)
+    dw = Drawable(width, height; fname)
     testpattern1(dw, width, height)
     close(dw)
     return true
@@ -56,7 +56,7 @@ function main3()
     # drawing
     rec = RecorderDrawable(recwidth, recheight)
     testpattern1(rec, recwidth, recheight)
-    dw = Drawable(width, height, fname)
+    dw = Drawable(width, height; fname)
     rect(dw, Point(0,0), Point(width, height); fillcolor = Color(1,0.8,0.9))
     paint(dw, rec)
     paint(dw, rec, Point(350,250), 0.4)

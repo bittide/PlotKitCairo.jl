@@ -31,6 +31,15 @@ using .Colors
 include("boxpoints.jl")
 using .BoxPoints
 
+include("drawables.jl")
+using .Drawables
+
+include("layout.jl")
+using .Layout
+
+include("images.jl")
+using .Images
+
 include("cairotools.jl")
 using .CairoTools
 
@@ -46,6 +55,9 @@ end
 reexport(Tools)
 reexport(Colors)
 reexport(BoxPoints)
+reexport(Drawables)
+reexport(Layout)
+reexport(Images)
 reexport(CairoTools)
 
 
