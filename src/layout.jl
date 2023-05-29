@@ -16,11 +16,12 @@ module Layout
 
 using ..Cairo
 using ..Drawables: Drawable, RecorderDrawable
+using ..BoxPoints: Point
 
 export hbox, vbox, offset, hvbox, stack
     
 # functions for laying out drawables
-function hbox(r1::RecorderDrawable, r2::RecorderDrawable)
+function hbox(r1::T, r2::T) where T<:Drawable
     width = r1.width + r2.width
     height = max(r1.height, r2.height)
     r = RecorderDrawable(width, height)
@@ -29,7 +30,7 @@ function hbox(r1::RecorderDrawable, r2::RecorderDrawable)
     return r
 end
 
-function vbox(r1::RecorderDrawable, r2::RecorderDrawable)
+function vbox(r1::T, r2::T) where T<:Drawable
     width = max(r1.width, r2.width)
     height = r1.height + r2.height
     r = RecorderDrawable(width, height)
@@ -40,7 +41,7 @@ end
 
 
 # position r2 relative to r1
-function offset(r1::RecorderDrawable, r2::RecorderDrawable, dx, dy)
+function offset(r1::T, r2::T, dx, dy) where T<:Drawable
     left = min(0, dx)
     top = min(0, dy)
     right = max(r1.width, r2.width + dx)
