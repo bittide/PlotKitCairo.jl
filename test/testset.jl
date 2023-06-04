@@ -1,4 +1,5 @@
 
+plotpath(x) = joinpath(ENV["HOME"], "plots/", x)
 
 
 function main()
@@ -7,11 +8,14 @@ function main()
         @test main2()
         @test main3()
         @test main4()
+        @test main5()
+        @test main6()
     end
 end
     
 # basic lines
 function main1()
+    println("main1")
     width = 800
     height = 600
     fname = plotpath("pkcairo1.png")
@@ -34,6 +38,7 @@ end
 
 # basic lines
 function main2()
+    println("main2")
     width = 800
     height = 600
     fname = plotpath("pkcairo2.pdf")
@@ -47,6 +52,7 @@ end
 
 # test recorder painting
 function main3()
+    println("main3")
     width = 800
     height = 600
     fname = plotpath("pkcairo3.pdf")
@@ -67,6 +73,7 @@ end
 
 # test recorder save
 function main4()
+    println("main4")
     width = 800
     height = 600
     fname = plotpath("pkcairo4.pdf")
@@ -76,5 +83,30 @@ function main4()
     testpattern1(rec, width, height)
     save(rec, fname)
     close(rec)
+    return true
+end
+
+
+# draw using cairo
+function main5()
+    println("main5")
+    d = Drawable(800, 600)
+    rect(d, Point(0,0), Point(800, 600); fillcolor = Color(:red))
+    line(d, Point(10, 20), Point(800, 450);
+         linestyle = LineStyle(Color(:blue), 5))
+    line(d, Point(10, 500), Point(600, 50);
+         linestyle = LineStyle(Color(:green), 5))
+    save(d, plotpath("test_cairo5.png"))
+    return true
+end
+
+
+function main6()
+    println("main6")
+    d = Drawable(800, 600) 
+    rect(d, Point(300,20), Point(200, 100); fillcolor = Color(1,0.8,0.8))
+    text(d, Point(300,120), 50, Color(:black),
+         "Hellogello"; horizontal = "left", vertical="bottom")
+    save(d, plotpath("test_cairo6.pdf"))
     return true
 end

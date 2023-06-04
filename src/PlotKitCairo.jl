@@ -31,6 +31,9 @@ using .Colors
 include("boxpoints.jl")
 using .BoxPoints
 
+include("curves.jl") # nothing depends on curves
+using .Curves
+
 include("drawables.jl")
 using .Drawables
 
@@ -55,6 +58,7 @@ end
 reexport(Tools)
 reexport(Colors)
 reexport(BoxPoints)
+reexport(Curves)
 reexport(Drawables)
 reexport(Layout)
 reexport(Images)

@@ -21,7 +21,7 @@ using ..BoxPoints: Point
 export hbox, vbox, offset, hvbox, stack
     
 # functions for laying out drawables
-function hbox(r1::T, r2::T) where T<:Drawable
+function hbox(r1::T1, r2::T2) where {T1<:Drawable, T2<:Drawable}
     width = r1.width + r2.width
     height = max(r1.height, r2.height)
     r = RecorderDrawable(width, height)
@@ -30,7 +30,7 @@ function hbox(r1::T, r2::T) where T<:Drawable
     return r
 end
 
-function vbox(r1::T, r2::T) where T<:Drawable
+function vbox(r1::T1, r2::T2) where {T1<:Drawable, T2<:Drawable}
     width = max(r1.width, r2.width)
     height = r1.height + r2.height
     r = RecorderDrawable(width, height)
@@ -41,7 +41,7 @@ end
 
 
 # position r2 relative to r1
-function offset(r1::T, r2::T, dx, dy) where T<:Drawable
+function offset(r1::T1, r2::T2, dx, dy) where {T1<:Drawable, T2<:Drawable}
     left = min(0, dx)
     top = min(0, dy)
     right = max(r1.width, r2.width + dx)
