@@ -31,7 +31,7 @@ using .Colors
 include("boxpoints.jl")
 using .BoxPoints
 
-include("curves.jl") # nothing depends on curves
+include("curves.jl") 
 using .Curves
 
 include("drawables.jl")

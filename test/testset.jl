@@ -10,6 +10,8 @@ function main()
         @test main4()
         @test main5()
         @test main6()
+        @test main7()
+        @test main8()
     end
 end
     
@@ -108,5 +110,21 @@ function main6()
     text(d, Point(300,120), 50, Color(:black),
          "Hellogello"; horizontal = "left", vertical="bottom")
     save(d, plotpath("test_cairo6.pdf"))
+    return true
+end
+
+# beziers
+function main7()
+    println("main7")
+    d = Drawable(800, 600)
+    rect(d, Point(0,0), Point(800, 600); fillcolor = Color(:white))
+    bezier = Bezier(Point(100,100), Point(600,200), pi/6, pi/6, 0.3)
+    curve(d, bezier; linestyle = LineStyle( Color(:black), 2))
+
+    for i=0:0.1:0.5
+        p = point(bezier, i)
+        circle(d, p, 10; fillcolor = Color(:red))
+    end
+    save(d, plotpath("test_cairo7.pdf"))
     return true
 end

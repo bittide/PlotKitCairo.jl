@@ -21,6 +21,7 @@ using ..Cairo
 using ..Colors
 using ..BoxPoints
 using ..Drawables: Drawable
+using ..Curves: Bezier
 
 
 export LineStyle, circle, curve, curve_between, draw, get_text_info, line, line_to, move_to, over, rect, set_linestyle, source, stroke, text
@@ -284,7 +285,11 @@ function curve(ctx::CairoContext, p0, p1, p2, p3;
     Cairo.curve_to(ctx, p1, p2, p3)
     draw(ctx; closed, linestyle, fillcolor)
 end
+curve(ctx::CairoContext, b::Bezier; kw...) = curve(ctx, b.p0, b.p1, b.p2, b.p3; kw...)
 curve(dw::Drawable, p0, p1, p2, p3; kw...) = curve(dw.ctx,  p0, p1, p2, p3; kw...)
+curve(dw::Drawable, b::Bezier; kw...) = curve(dw.ctx,  b; kw...)
+
+
 
 """
     line(ctx, x; closed, linestyle, fillcolor)

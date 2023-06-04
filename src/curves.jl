@@ -1,6 +1,7 @@
 
 module Curves
 
+using LinearAlgebra: norm
 using ..BoxPoints: Point
 
 export Bezier, point, tangent, point_and_tangent
@@ -12,6 +13,8 @@ mutable struct Bezier
     p2
     p3
 end
+
+polar(r, theta) = Point(r*cos(theta), r*sin(theta))
 
 ##############################################################################
 # bezier curves
