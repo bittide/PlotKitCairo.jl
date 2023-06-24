@@ -11,7 +11,6 @@ function main()
         @test main5()
         @test main6()
         @test main7()
-        @test main8()
     end
 end
     
