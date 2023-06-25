@@ -19,7 +19,7 @@ function main1()
     println("main1")
     width = 800
     height = 600
-    fname = plotpath("pkcairo1.png")
+    fname = plotpath("test_cairo1.png")
     # drawing
     dw = Drawable(width, height; fname)
     rect(dw, Point(0,0), Point(800, 600); fillcolor = Color(1,0.8,0.9))
@@ -42,7 +42,7 @@ function main2()
     println("main2")
     width = 800
     height = 600
-    fname = plotpath("pkcairo2.pdf")
+    fname = plotpath("test_cairo2.pdf")
     # drawing
     dw = Drawable(width, height; fname)
     testpattern1(dw, width, height)
@@ -56,7 +56,7 @@ function main3()
     println("main3")
     width = 800
     height = 600
-    fname = plotpath("pkcairo3.pdf")
+    fname = plotpath("test_cairo3.pdf")
     recwidth = 400
     recheight = 300
     
@@ -77,7 +77,7 @@ function main4()
     println("main4")
     width = 800
     height = 600
-    fname = plotpath("pkcairo4.pdf")
+    fname = plotpath("test_cairo4.pdf")
     
     # drawing
     rec = RecorderDrawable(width, height)
