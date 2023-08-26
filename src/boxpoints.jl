@@ -18,7 +18,7 @@ module BoxPoints
 using LinearAlgebra
 using ..Tools
 
-export Box, Point, expand_box, inbox, scale_box
+export Box, Point, expand_box, inbox, scale_box, corners
 
 ##############################################################################
 # points
@@ -62,6 +62,7 @@ Box(tl::Point, br::Point) = Box(tl.x, br.x, tl.y, br.y)
 
 Base.copy(a::Box) =  Box(a.xmin, a.xmax, a.ymin, a.ymax)
 
+corners(b::Box) = Point[(b.xmin, b.ymin), (b.xmax, b.ymin), (b.xmax, b.ymax), (b.xmin, b.ymax)]
 function expand_box(b::Box, dx, dy)
     return Box(b.xmin - dx, b.xmax + dx, b.ymin - dy, b.ymax + dy)
 end
