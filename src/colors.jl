@@ -18,7 +18,7 @@ module Colors
 using LinearAlgebra
 using ..Tools
 
-export Color, RGBAColor, RGBColor, colormap, hadamard, hexcol, interp
+export Color, RGBAColor, RGBColor, colormap, hadamard, hexcol, interp, default_colors
     
 abstract type Color end
 
@@ -229,9 +229,12 @@ Return the i'th color in the default colormap, darkened by amount j.
 """
 colormap(i,j) = 0.7 ^ (j-1) * colormap(i)
 
+const default_colors = []
 
-
-const default_colors =   vcat(css_colors(), make_pseudo_random_colors())
+function __init__()
+    append!(default_colors, css_colors())
+    append!(default_colors, make_pseudo_random_colors())
+end
 
 const color_names = Dict(
     :white   => Color(1.0, 1.0, 1.0),
