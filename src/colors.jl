@@ -18,7 +18,7 @@ module Colors
 using LinearAlgebra
 using ..Tools
 
-export Color, RGBAColor, RGBColor, colormap, hadamard, hexcol, interp, default_colors
+export Color, RGBAColor, RGBColor, colormap, default_colors, hadamard, hexcol, interp, length_colormap
     
 abstract type Color end
 
@@ -220,7 +220,8 @@ end
 
 Return the i'th color in the default colormap
 """
-colormap(i) = default_colors[i]
+colormap(i) = default_colors[(i-1) % length_colormap() + 1]
+length_colormap() = length(default_colors)
 
 """
     colormap(i,j)
