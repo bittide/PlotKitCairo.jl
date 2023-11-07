@@ -18,7 +18,7 @@ module Colors
 using LinearAlgebra
 using ..Tools
 
-export Color, RGBAColor, RGBColor, colormap, default_colors, hadamard, hexcol, interp, length_colormap
+export Color, Gradient, RGBAColor, RGBColor, colormap, default_colors, hadamard, hexcol, interp, length_colormap
     
 abstract type Color end
 
@@ -43,6 +43,11 @@ Color(r,g,b,a) = RGBAColor(r,g,b,a)
 Color(x::Tuple{Any,Any,Any}) = RGBColor(x)
 Color(x::Tuple{Any,Any,Any,Any}) = RGBAColor(x)
 Color(x::Symbol) = color_names[x]
+
+struct Gradient
+    colors
+    stops
+end
 
 
 ##############################################################################
@@ -248,6 +253,24 @@ const color_names = Dict(
     :magenta => Color(1,0,1),
     :yellow => Color(1,1,0),
 )
+
+##############################################################################
+# evaluate gradient
+
+function interpolate(x::Vector, y::Vector, t)
+    # this function returns the largest i such that x[i] <= t
+    i = searchsortedlast(x, t)
+    if x[i] == t
+        return y[i]
+    end
+    @assert i != length(x)
+    return interpolate(x[i], y[i], x[i+1], y[i+1], t)
+end
+interpolate(x1,y1,x2,y2,d) = ((x2-d)*y1 - (x1-d)*y2)/(x2-x1)
+
+evaluate(g::Gradient, t) = interpolate(g.stops, g.colors, t)
+(g::Gradient)(t) = evaluate(g, t)
+
 
 
 end

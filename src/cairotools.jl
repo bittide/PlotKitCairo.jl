@@ -17,14 +17,14 @@
 module CairoTools
 
 using LinearAlgebra
-using ..Cairo
+using ..Cairo: destroy, CairoContext, Cairo, CairoPattern, rectangle, stroke
 using ..Colors
 using ..BoxPoints
 using ..Drawables: Drawable
 using ..Curves: Bezier
 
 
-export LineStyle, circle, curve, curve_between, draw, get_text_info, line, line_to, move_to, over, rect, set_linestyle, source, stroke, text
+export destroy, LineStyle, add_color_stop, circle, curve, curve_between, draw, get_text_info, line, line_to, linear_pattern, move_to, over, rect, set_linestyle, source, stroke, text
 
 ##############################################################################
 
@@ -108,8 +108,26 @@ Set the current Cairo source to be the color c.
 """
 source(ctx::CairoContext, c::RGBColor) = Cairo.set_source_rgb(ctx, c.r, c.g, c.b)
 source(ctx::CairoContext, c::RGBAColor) = Cairo.set_source_rgba(ctx, c.r, c.g, c.b, c.a)
-source(dw::Drawable, c::Color) = source(dw.ctx, c)
+source(ctx::CairoContext, p::CairoPattern) = Cairo.set_source(ctx, p)
+source(dw::Drawable, c) = source(dw.ctx, c)
 
+
+"""
+    linear_pattern(q1, q2)
+
+Create a Cairo linear pattern between points q1 and q2.
+"""
+linear_pattern(q1::Point, q2::Point) = Cairo.pattern_create_linear(q1.x, q1.y, q2.x, q2.y)
+
+
+
+"""
+   add_color_stop(pat::CairoPattern, offset, c::RGBColor)
+
+Add a Cairo color stop.
+"""
+add_color_stop(pat::CairoPattern, offset, c::RGBColor) = Cairo.pattern_add_color_stop_rgb(pat, offset, c.r, c.g, c.b)
+add_color_stop(pat::CairoPattern, offset, c::RGBAColor) = Cairo.pattern_add_color_stop_rgba(pat, offset, c.r, c.g, c.b, c.a)
 
 """
     rectangle(ctx, p, wh)
