@@ -41,7 +41,7 @@ end
 
 # draws an image with top,left at p, or centered at p
 # scaled to given width and height, if given
-function drawimage(ctx::CairoContext, pik::Pik, p; width = nothing, height = nothing, centered = false)
+function drawimage(ctx::CairoContext, pik::Pik, p::Point; width = nothing, height = nothing, centered = false)
     if width == nothing
         w = pik.width
     else
@@ -55,7 +55,7 @@ function drawimage(ctx::CairoContext, pik::Pik, p; width = nothing, height = not
     drawimage_x(ctx, pik::Pik, p.x, p.y, w, h; centered = centered)
 end
 
-drawimage(dw::Drawable, pik::Pik, p; kw...) = drawimage(dw.ctx, pik, p; kw...)
+drawimage(dw::Drawable, pik::Pik, p::Point; kw...) = drawimage(dw.ctx, pik, p; kw...)
 
 drawimage(ctx::CairoContext, pik::Pik, b::Box) = drawimage(ctx, pik, Point(b.xmin, b.ymin);
                                              width = b.xmax - b.xmin,
