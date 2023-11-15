@@ -17,7 +17,7 @@
 module CairoTools
 
 using LinearAlgebra
-using ..Cairo: destroy, CairoContext, Cairo, CairoPattern, rectangle, stroke
+using ..Cairo: destroy, CairoContext, Cairo, CairoPattern, circle, rectangle, stroke, text
 using ..Colors
 using ..BoxPoints
 using ..Drawables: Drawable
