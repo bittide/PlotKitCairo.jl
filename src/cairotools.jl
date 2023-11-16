@@ -42,24 +42,24 @@ end
 
 Returns the Cairo text_extents data giving the dimensions of the text at size fsize.
 """
-function get_text_info(ctx::CairoContext, fsize, txt)
-    Cairo.select_font_face(ctx, "Sans", Cairo.FONT_SLANT_NORMAL,
+function get_text_info(ctx::CairoContext, fsize, fname, txt)
+    Cairo.select_font_face(ctx, fname, Cairo.FONT_SLANT_NORMAL,
                            Cairo.FONT_WEIGHT_NORMAL)
     Cairo.set_font_size(ctx, fsize)
     return Cairo.text_extents(ctx, txt)
 end
-get_text_info(dw::Drawable, fsize, txt) = get_text_info(dw.ctx, fsize, txt)
+get_text_info(dw::Drawable, fsize, fname, txt) = get_text_info(dw.ctx, fsize, fname, txt)
 
 """
-    text(ctx, p, fsize, color, txt; horizontal, vertical)
+    text(ctx, p, fsize, color, txt; horizontal, vertical, fname)
 
 Write txt to the Cairo context at point p, with given size and color.
 
 Here horizontal alignment can be "left", "center", or "right".
 Vertical alignment can be "top", "center", "bottom" or "baseline".
 """
-function Cairo.text(ctx::CairoContext, p::Point, fsize, fcolor, txt; horizontal = "left", vertical="baseline")
-    left, top, width, height = get_text_info(ctx, fsize, txt)
+function Cairo.text(ctx::CairoContext, p::Point, fsize, fcolor, txt; horizontal = "left", vertical="baseline", fname="Sans")
+    left, top, width, height = get_text_info(ctx, fsize, fname, txt)
     if horizontal == "left"
         dx = left
     elseif horizontal == "center"
@@ -77,7 +77,7 @@ function Cairo.text(ctx::CairoContext, p::Point, fsize, fcolor, txt; horizontal 
         dy = 0
     end
     p = p - Point(dx, dy)
-    textx(ctx, p, fsize, fcolor, txt)
+    textx(ctx, p, fsize, fcolor, fname, txt)
 end
 Cairo.text(dw::Drawable, args...; kw...) = text(dw.ctx, args...; kw...)
            
@@ -225,14 +225,14 @@ strokefill(dw::Drawable, ls, fillcolor) = strokefill(dw.ctx, ls, fillcolor)
 
 Write txt at point p, with the given font size and color.
 """
-function textx(ctx::CairoContext, p::Point, fsize, color, txt)
-    Cairo.select_font_face(ctx, "Sans", Cairo.FONT_SLANT_NORMAL, Cairo.FONT_WEIGHT_NORMAL)
+function textx(ctx::CairoContext, p::Point, fsize, color, fname, txt)
+    Cairo.select_font_face(ctx, fname, Cairo.FONT_SLANT_NORMAL, Cairo.FONT_WEIGHT_NORMAL)
     Cairo.set_font_size(ctx, fsize)
     Cairo.move_to(ctx, p)
     source(ctx, color)
     Cairo.show_text(ctx, txt)
 end
-textx(dw::Drawable, p::Point, fsize, color, txt) = textx(dw.ctx, p, fsize, color, txt)
+textx(dw::Drawable, p::Point, fsize, color, fname, txt) = textx(dw.ctx, p, fsize, color, fname, txt)
 
 """
     draw(ctx; closed, linestyle, fillcolor)
