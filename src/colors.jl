@@ -18,7 +18,7 @@ module Colors
 using LinearAlgebra
 using ..Tools
 
-export Color, Gradient, RGBAColor, RGBColor, colormap, default_colors, hadamard, hexcol, interp, length_colormap
+export Color, Gradient, RGBAColor, RGBColor, colormap, default_colors, gradient, hadamard, hexcol, interp, length_colormap
     
 abstract type Color end
 
@@ -271,6 +271,32 @@ interpolate(x1,y1,x2,y2,d) = ((x2-d)*y1 - (x1-d)*y2)/(x2-x1)
 evaluate(g::Gradient, t) = interpolate(g.stops, g.colors, t)
 (g::Gradient)(t) = evaluate(g, t)
 
+
+
+###############################################################################
+# a completely different type of gradient
+
+
+arr(a::Color) = [a.r, a.g, a.b]
+function make_gradient()
+    c1 = arr(colormap(1))
+    c2 = arr(colormap(3))
+    interp(x,y,t) = (1-t)*x + t*y
+    ext(t) = 2*abs(t-0.5)
+    function nc(weight)
+        z = interp([1,1,1],   interp(c2, c1, weight), 0.25 + 0.75*ext(weight))
+        return Color(z[1], z[2], z[3])
+    end
+    return nc
+end
+function normalize(w)
+    maxw = maximum(w)
+    minw = minimum(w)
+    return (w .- minw) / (maxw - minw)
+end
+
+# given w a vector, return the color corresponding to w[i] 
+gradient(w,i) = make_gradient().(normalize(w))[i]
 
 
 end
