@@ -41,7 +41,7 @@ end
 
 # draws an image with top,left at p, or centered at p
 # scaled to given width and height, if given
-function drawimage(ctx::CairoContext, pik::Pik, p::Point; width = nothing, height = nothing, centered = false)
+function drawimage(ctx::CairoContext, pik::Pik, p::Point; width = nothing, height = nothing, centered = false, kw...)
     if width == nothing
         w = pik.width
     else
@@ -52,15 +52,16 @@ function drawimage(ctx::CairoContext, pik::Pik, p::Point; width = nothing, heigh
     else
         h = height
     end
-    drawimage_x(ctx, pik::Pik, p.x, p.y, w, h; centered = centered)
+    drawimage_x(ctx, pik::Pik, p.x, p.y, w, h; centered = centered, kw...)
 end
 
 drawimage(dw::Drawable, pik::Pik, p::Point; kw...) = drawimage(dw.ctx, pik, p; kw...)
 
-drawimage(ctx::CairoContext, pik::Pik, b::Box) = drawimage(ctx, pik, Point(b.xmin, b.ymin);
+drawimage(ctx::CairoContext, pik::Pik, b::Box; kw...) = drawimage(ctx, pik, Point(b.xmin, b.ymin);
                                              width = b.xmax - b.xmin,
-                                             height = b.ymax - b.ymin)
-drawimage(dw::Drawable, pik::Pik, b::Box) = drawimage(dw.ctx, pik, b)
+                                             height = b.ymax - b.ymin, kw...)
+
+drawimage(dw::Drawable, pik::Pik, b::Box; kw...) = drawimage(dw.ctx, pik, b; kw...)
 
 
 function drawimage_to_mask(ctx::CairoContext, pik::Pik, pts, sx, sy; format = Cairo.FORMAT_ARGB32,

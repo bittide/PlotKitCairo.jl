@@ -18,7 +18,7 @@ using ..Cairo
 using ..Drawables: Drawable, RecorderDrawable
 using ..BoxPoints: Point
 
-export hbox, vbox, offset, hvbox, stack
+export hbox, vbox, offset, hvbox, stacked
     
 # functions for laying out drawables
 function hbox(r1::T1, r2::T2) where {T1<:Drawable, T2<:Drawable}
@@ -67,7 +67,7 @@ function hvbox(farray)
     return vbox(collect(rows))
 end
 
-function stack(x, ncols)
+function stacked(x, ncols)
     nrows = Int(ceil(length(x)/ncols))
     A = Array{Any,2}(missing, ncols, nrows)
     for i=1:length(x)

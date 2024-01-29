@@ -1,4 +1,16 @@
 
+
+#
+# run using Pkg.test("PlotKitCairo")
+#
+#
+# or using
+#
+#  cd PlotKitCairo.jl/test
+#  julia
+#  include("runtests.jl")
+#
+#
 module TestSet
 
 using PlotKitCairo
