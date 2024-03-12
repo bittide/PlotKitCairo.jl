@@ -18,7 +18,8 @@ module Colors
 using LinearAlgebra
 using ..Tools
 
-export Color, Gradient, RGBAColor, RGBColor, colormap, default_colors, gradient, hadamard, hexcol, interp, length_colormap
+export Color, Gradient, RGBAColor, RGBColor, rgbacolor_hadamard, rgbacolor_hadamarddiv,
+    rgbcolor_hadamard, rgbcolor_hadamarddiv, colormap, default_colors, gradient, hexcol, interp, length_colormap
     
 abstract type Color end
 
