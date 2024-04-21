@@ -17,8 +17,11 @@ module BoxPoints
 
 using LinearAlgebra
 using ..Tools
+using ..Misc
 
-export Box, Point, expand_box, inbox, scale_box, corners
+export Box, Point, PointList, corners, expand_box, flat, getbox, inbox, input, scale_box, remove_data_outside_box, smallest_box_containing_data
+
+
 
 ##############################################################################
 # points
@@ -51,6 +54,7 @@ mutable struct Box
     ymax
 end
 
+getbox(a) = Box(a.xmin, a.xmax, a.ymin, a.ymax)
 
 Box(; xmin=missing, xmax=missing, ymin=missing, ymax=missing) = Box(xmin, xmax, ymin, ymax)
 
@@ -105,8 +109,51 @@ function Base.getproperty(b::Box, s::Symbol)
         return getfield(b, s)
     end
 end
-    
+
+function Misc.ifnotmissing(a::Box, b::Box)
+    return Box(ifnotmissing(a.xmin, b.xmin),
+               ifnotmissing(a.xmax, b.xmax),
+               ifnotmissing(a.ymin, b.ymin),
+               ifnotmissing(a.ymax, b.ymax))
+end
+
+
+
+# if requested limits are finite, use them
+function Misc.iffinite(a::Box, b::Box)
+    xmin = iffinite(a.xmin, b.xmin)
+    xmax = iffinite(a.xmax, b.xmax)
+    ymin = iffinite(a.ymin, b.ymin)
+    ymax = iffinite(a.ymax, b.ymax)
+    return Box(xmin, xmax, ymin, ymax)
+end
+
+
 ##############################################################################
+# PointLists
+
+mutable struct PointList
+    points::Vector{Point}
+end
+
+# input returns a vector of pointlists
+input(data::Vector{Point}) = [PointList(data)]
+input(data::Array{Vector{Point}}) = [PointList(p) for p in data[:]]
+
+flat(pl::PointList) = pl
+flat(pl::Vector{PointList}) = PointList(reduce(vcat, a.points for a in pl))
+
+remove_data_outside_box(pl::PointList, box::Box) = PointList(Point[a for a in pl.points if inbox(a, box)])
+
+function smallest_box_containing_data(pl::PointList)
+    xmin = minimum(a.x for a in pl.points)
+    xmax = maximum(a.x for a in pl.points)
+    ymin = minimum(a.y for a in pl.points)
+    ymax = maximum(a.y for a in pl.points)
+    return Box(xmin, xmax, ymin, ymax)
+end
+
+
 
 
 end

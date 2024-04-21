@@ -25,6 +25,9 @@ using LinearAlgebra
 include("tools.jl")
 using .Tools
 
+include("misc.jl")
+using .Misc
+
 include("colors.jl")
 using .Colors
 
@@ -54,8 +57,8 @@ function reexport(m)
     end
 end
 
-
 reexport(Tools)
+reexport(Misc)
 reexport(Colors)
 reexport(BoxPoints)
 reexport(Curves)
