@@ -228,9 +228,13 @@ Write txt at point p, with the given font size and color.
 function textx(ctx::CairoContext, p::Point, fsize, color, fname, txt)
     Cairo.select_font_face(ctx, fname, Cairo.FONT_SLANT_NORMAL, Cairo.FONT_WEIGHT_NORMAL)
     Cairo.set_font_size(ctx, fsize)
+
+    #Cairo.save(ctx)
     Cairo.move_to(ctx, p)
+    #Cairo.rotate(ctx, pi/2)
     source(ctx, color)
     Cairo.show_text(ctx, txt)
+    #Cairo.restore(ctx)
 end
 textx(dw::Drawable, p::Point, fsize, color, fname, txt) = textx(dw.ctx, p, fsize, color, fname, txt)
 
