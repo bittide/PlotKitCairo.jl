@@ -65,8 +65,22 @@ end
 #
 allowed_kws(T, kw) = Dict(a => kw[a] for a in keys(kw) if a in fieldnames(T))
 
+# getoptions_tuple returns a NamedTuple
+#
+# Compared with a Dict/Pairs
+#
+# - the values of a namedtuple can be accessed via dot notation
+# - iterating over a namedtuple just gives the values,
+#   but iterating over Pairs/Dict gives key,value pairs
+#
+#
 getoptions_tuple(; kw...) = kwtuple(kw)
+
 kwtuple(opts) = NamedTuple{keys(opts)}(values(opts))
+
+# getoptions returns a Pairs object.
+# A pairs object is a Dict that has an order.
+#
 getoptions(; kw...) = kw
 
 
