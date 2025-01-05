@@ -90,33 +90,55 @@ Useful for log axes, eg. 10^{-1}. Then basefname = cmr10 and supfname = cmr7
 Also for x^y, use basefname = "cmmi10" and supfname = "cmmi7"
 """
 function text_with_superscript(ad, pos, fsize, fcolor, basestr, expstr;
-                     basefname = "cmr10", supfname = "cmr7", vertical = "baseline")
+                                   basefname = "cmr10", supfname = "cmr7",
+                                   vertical = "baseline", horizontal = "left")
     sh = -0.37
     sup = fsize * Point(0.1, sh)
     num = fsize * Point(0.67, sh)
     nominussup = fsize * Point(0.05, sh)
+
+    # compute extents of base text
     left, top, width, height = get_text_info(ad, fsize, basefname, basestr)
     if  vertical == "top"
-        dy = Point(0,top)
+        dy = top
     elseif vertical == "center"
-        dy = Point(0, top + height/2)
+        dy = top + height/2
     elseif vertical == "bottom"
-        dy = Point(0, top + height)
+        dy = top + height
     elseif vertical == "baseline"
-        dy = Point(0,0)
+        dy = 0
     end
-    text(ad, pos - dy, fsize, fcolor, basestr; fname = basefname)
-    rpos = pos + Point(width, 0)
+    # compute extents of superscript
+    # compute width of superscript other text, (ie with the minus stripped)
+    if expstr[1] == '-'
+        # get width of minus
+        non_minus_width = get_text_info(ad, 0.7*fsize, supfname, expstr[2:end])[3]
+        total_width = num.x + non_minus_width
+    else
+        super_width = get_text_info(ad, 0.7*fsize, supfname, expstr)[3]
+        total_width =  nominussup.x + super_width
+    end
+    if horizontal == "left"
+        dx = left
+    elseif horizontal == "center"
+        dx = left + total_width/2
+    elseif horizontal == "right"
+        dx = total_width
+    elseif horizontal == "baseright"  # right of base text
+        dx = width
+    end
+    rpos = pos - Point(dx, dy)
+    text(ad, rpos, fsize, fcolor, basestr; fname = basefname)
     # To find the minus sign character
     # go to https://hellogreg.github.io/glytter/
     # upload cmsy10
     # copy the string into julia s= "x"
     # and look at s[1] in the repl
     if expstr[1] == '-'
-        text(ad, rpos + sup - dy, 0.7*fsize,  fcolor, "\u00A1"; fname = "cmsy7")
-        text(ad, rpos + num - dy, 0.7*fsize,  fcolor, expstr[2:end]; fname = supfname)
+        text(ad, rpos + Point(width, 0) + sup, 0.7*fsize,  fcolor, "\u00A1"; fname = "cmsy7")
+        text(ad, rpos + Point(width, 0) + num, 0.7*fsize,  fcolor, expstr[2:end]; fname = supfname)
     else
-        text(ad, rpos + nominussup - dy, 0.7*fsize,  fcolor, expstr; fname = supfname)
+        text(ad, rpos + Point(width, 0) + nominussup, 0.7*fsize,  fcolor, expstr; fname = supfname)
     end
 end
 text_with_superscript(dw::Drawable, args...; kw...) = text_with_superscript(dw.ctx, args...; kw...)
