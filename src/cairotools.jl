@@ -24,7 +24,7 @@ using ..Drawables: Drawable
 using ..Curves: Bezier
 
 
-export destroy, LineStyle, add_color_stop, circle, curve, curve_between, draw, get_text_info, line, line_to, linear_pattern, move_to, over, rect, set_linestyle, source, stroke, text
+export destroy, LineStyle, add_color_stop, circle, curve, curve_between, draw, get_text_info, line, line_to, linear_pattern, move_to, over, rect, set_linestyle, source, stroke, text, text_with_superscript
 
 ##############################################################################
 
@@ -80,9 +80,46 @@ function Cairo.text(ctx::CairoContext, p::Point, fsize, fcolor, txt; horizontal 
     textx(ctx, p, fsize, fcolor, fname, txt)
 end
 Cairo.text(dw::Drawable, args...; kw...) = text(dw.ctx, args...; kw...)
-           
 
 
+"""
+   text_with_superscript(ad, pos, fsize, fcolor, basestr, expstr;
+                     basefname = "cmr10", supfname = "cmr7")
+Draw a^b
+Useful for log axes, eg. 10^{-1}. Then basefname = cmr10 and supfname = cmr7
+Also for x^y, use basefname = "cmmi10" and supfname = "cmmi7"
+"""
+function text_with_superscript(ad, pos, fsize, fcolor, basestr, expstr;
+                     basefname = "cmr10", supfname = "cmr7", vertical = "baseline")
+    sh = -0.37
+    sup = fsize * Point(0.1, sh)
+    num = fsize * Point(0.67, sh)
+    nominussup = fsize * Point(0.05, sh)
+    left, top, width, height = get_text_info(ad, fsize, basefname, basestr)
+    if  vertical == "top"
+        dy = Point(0,top)
+    elseif vertical == "center"
+        dy = Point(0, top + height/2)
+    elseif vertical == "bottom"
+        dy = Point(0, top + height)
+    elseif vertical == "baseline"
+        dy = Point(0,0)
+    end
+    text(ad, pos - dy, fsize, fcolor, basestr; fname = basefname)
+    rpos = pos + Point(width, 0)
+    # To find the minus sign character
+    # go to https://hellogreg.github.io/glytter/
+    # upload cmsy10
+    # copy the string into julia s= "x"
+    # and look at s[1] in the repl
+    if expstr[1] == '-'
+        text(ad, rpos + sup - dy, 0.7*fsize,  fcolor, "\u00A1"; fname = "cmsy7")
+        text(ad, rpos + num - dy, 0.7*fsize,  fcolor, expstr[2:end]; fname = supfname)
+    else
+        text(ad, rpos + nominussup - dy, 0.7*fsize,  fcolor, expstr; fname = supfname)
+    end
+end
+text_with_superscript(dw::Drawable, args...; kw...) = text_with_superscript(dw.ctx, args...; kw...)
 
 
 """
