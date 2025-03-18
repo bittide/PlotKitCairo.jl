@@ -27,8 +27,8 @@ export Box, Point, PointList, corners, expand_box, flat, getbox, inbox, input, s
 # points
 
 struct Point
-    x::Number
-    y::Number
+    x::Float64
+    y::Float64
 end
 
 eval(makevector(Point))
