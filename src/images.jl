@@ -120,7 +120,7 @@ drawimage_x(dw::Drawable, args...; kw...) = drawimage_x(dw.ctx, args...; kw...)
 #
 # possible formats are Cairo.FORMAT_RGB24 or  Cairo.FORMAT_ARGB32
 #
-function Cairo.CairoSurface(pik::Pik; format = Cairo.FORMAT_RGB24)
+function Cairo.CairoSurface(pik::Pik; format = Cairo.FORMAT_ARGB32)
     w = pik.width
     h = pik.height
     stride = Cairo.format_stride_for_width(format, w)
