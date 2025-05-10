@@ -136,6 +136,9 @@ mutable struct PointList
     points::Vector{Point}
 end
 
+PointList(x::Vector{T}) where T <: Tuple = PointList(Point.(x))
+
+
 # input returns a vector of pointlists
 input(data::Vector{Point}) = [PointList(data)]
 input(data::Array{Vector{Point}}) = [PointList(p) for p in data[:]]

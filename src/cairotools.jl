@@ -17,14 +17,17 @@
 module CairoTools
 
 using LinearAlgebra
+using Dates
+
 using ..Cairo: destroy, CairoContext, Cairo, CairoPattern, circle, rectangle, stroke, text
 using ..Colors
 using ..BoxPoints
-using ..Drawables: Drawable
+using ..Drawables: Drawable, RecorderDrawable, save
+using ..Layout: offset
 using ..Curves: Bezier
 
 
-export destroy, LineStyle, add_color_stop, circle, curve, curve_between, draw, get_text_info, line, line_to, linear_pattern, move_to, over, rect, set_linestyle, source, stroke, text, text_with_superscript
+export destroy, LineStyle, add_color_stop, circle, curve, curve_between, draw, get_text_info, line, line_to, linear_pattern, move_to, notitles, over, plotpath, qsave, rect, set_linestyle, source, stroke, text, text_with_superscript, titles
 
 ##############################################################################
 
@@ -397,7 +400,52 @@ end
 line(dw::Drawable, p::Point, q::Point; kw...) = line(dw.ctx, p, q; kw...)
 
 ###############################################################
-# images
+# utilities for saving with titles overlaid
+
+plotpath(x) = x
+
+function title(f)
+    tm = Dates.format(Dates.now(), "H:MM")        
+    return "$(f) $(tm)"
+end
+
+function addtitle(ad, fname)
+    ad2 = RecorderDrawable(min(200, ad.width),18)
+    rect(ad2.ctx, Point(0,0), Point(ad2.width, ad2.height); fillcolor = Color(0.9,1.0,1.0,0.7))
+    text(ad2.ctx, Point(2,13), 10, Color(0,0,0,0.7),  fname)
+    ad3 = offset(ad, ad2, 0, 0)
+    return ad3
+end
+
+# convenient (module-local) global
+addtitlestoplots = true
+
+function titles()
+    global addtitlestoplots = true
+end
+
+function notitles()
+    global addtitlestoplots = false
+end
+
+function qsave(ad, fname; scale = 4)
+    println("saving $fname")
+    if addtitlestoplots
+        ad2 = addtitle(ad, title(fname))
+    else
+        ad2 = ad
+    end
+    save(ad2, plotpath(fname), scale)
+end
+
+
+
+
+
+
+
+
+
 
 
 end
