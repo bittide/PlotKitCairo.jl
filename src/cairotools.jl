@@ -31,6 +31,24 @@ export destroy, LineStyle, add_color_stop, circle, curve, curve_between, draw, g
 
 ##############################################################################
 
+##  The following draw dotted lines.
+##  todo: Extend LineStyle to support this
+##
+##  function mline(ctx, p::Array{Point})
+##      Cairo.move_to(ctx, p[1])
+##      for i=2:length(p)
+##          Cairo.line_to(ctx, p[i])
+##      end
+##      Cairo.set_dash(ctx, [0.0, 8.0])
+##      Cairo.set_line_width(ctx, 3)
+##      Cairo.set_line_cap(ctx, Cairo.CAIRO_LINE_CAP_ROUND)
+##  
+##      source(ctx, Color(:black))
+##      Cairo.stroke(ctx)
+##  end
+
+
+
 mutable struct LineStyle
     color
     width
