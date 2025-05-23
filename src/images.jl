@@ -42,12 +42,12 @@ end
 # draws an image with top,left at p, or centered at p
 # scaled to given width and height, if given
 function drawimage(ctx::CairoContext, pik::Pik, p::Point; width = nothing, height = nothing, centered = false, kw...)
-    if width == nothing
+    if isnothing(width)
         w = pik.width
     else
         w = width
     end
-    if height == nothing
+    if isnothing(height)
         h = pik.height
     else
         h = height
