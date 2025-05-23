@@ -70,7 +70,7 @@ end
 function stacked(x, ncols)
     nrows = Int(ceil(length(x)/ncols))
     A = Array{Any,2}(missing, ncols, nrows)
-    for i=1:length(x)
+    for i in eachindex(x)
         A[i] = x[i]
     end
     B = permutedims(A, (2,1))

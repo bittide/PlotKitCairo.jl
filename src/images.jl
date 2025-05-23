@@ -70,7 +70,8 @@ function drawimage_to_mask(ctx::CairoContext, pik::Pik, pts, sx, sy; format = Ca
     surface = Cairo.CairoSurface(pik; format)
     # line(ctx, pts; closed=true, keep=true)
     Cairo.move_to(ctx, pts[1])
-    for i=2:length(pts)
+    np = length(pts)
+    for i=2:np
         Cairo.line_to(ctx, pts[i])
     end
     Cairo.close_path(ctx)
