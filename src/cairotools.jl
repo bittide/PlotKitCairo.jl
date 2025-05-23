@@ -456,9 +456,19 @@ function qsave(ad, fname; scale = 4)
     save(ad2, plotpath(fname), scale)
 end
 
+# module_name(@__MODULE__) returns string "QuickRunAll"
+function module_name(mod)
+    modstr =  string(mod)
+    lastperiod = findlast('.', modstr)
+    return modstr[lastperiod+1:end]
+end
 
 
-
+macro save(ad, fname)
+    return esc(quote
+                   qsave($ad, lowercase(PlotKit.CairoTools.module_name(@__MODULE__)) * "_" * $fname)
+               end)
+end
 
 
 
