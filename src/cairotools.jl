@@ -29,6 +29,7 @@ using ..Curves: Bezier
 
 export destroy, LineStyle, add_color_stop, circle, curve, curve_between, draw, get_text_info, line, line_to, linear_pattern, move_to, notitles, over, plotpath, qsave, rect, set_linestyle, source, stroke, text, text_with_superscript, titles
 
+export @save
 ##############################################################################
 
 ##  The following draw dotted lines.
