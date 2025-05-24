@@ -19,7 +19,7 @@ using LinearAlgebra
 using ..Tools
 using ..Misc
 
-export Box, Point, PointList, corners, expand_box, flat, getbox, inbox, input, scale_box, remove_data_outside_box, smallest_box_containing_data
+export Box, Point, PointList, VertexPairs, corners, expand_box, flat, getbox, inbox, input, scale_box, remove_data_outside_box, smallest_box_containing_data
 
 
 
@@ -154,6 +154,14 @@ function smallest_box_containing_data(pl::PointList)
     ymin = minimum(a.y for a in pl.points)
     ymax = maximum(a.y for a in pl.points)
     return Box(xmin, xmax, ymin, ymax)
+end
+
+##############################################################################
+# Graph type
+
+mutable struct VertexPairs
+    edges::Vector{@NamedTuple{src::Int64, dst::Int64}}   # list of named tuples
+    layout::Vector{Point}
 end
 
 

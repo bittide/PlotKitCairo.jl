@@ -29,7 +29,7 @@ using ..Curves: Bezier
 
 export destroy, LineStyle, add_color_stop, circle, curve, curve_between, draw, get_text_info, line, line_to, linear_pattern, move_to, notitles, over, plotpath, qsave, rect, set_linestyle, source, stroke, text, text_with_superscript, titles
 
-export @save
+export @m_str
 ##############################################################################
 
 ##  The following draw dotted lines.
@@ -455,20 +455,6 @@ function qsave(ad, fname; scale = 4)
         ad2 = ad
     end
     save(ad2, plotpath(fname), scale)
-end
-
-# module_name(@__MODULE__) returns string "QuickRunAll"
-function module_name(mod)
-    modstr =  string(mod)
-    lastperiod = findlast('.', modstr)
-    return modstr[lastperiod+1:end]
-end
-
-
-macro save(ad, fname)
-    return esc(quote
-                   qsave($ad, lowercase(PlotKit.CairoTools.module_name(@__MODULE__)) * "_" * $fname)
-               end)
 end
 
 
