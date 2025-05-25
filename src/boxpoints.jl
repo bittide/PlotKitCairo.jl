@@ -19,7 +19,7 @@ using LinearAlgebra
 using ..Tools
 using ..Misc
 
-export Box, Point, PointList, VertexPairs, corners, expand_box, flat, getbox, inbox, input, scale_box, remove_data_outside_box, smallest_box_containing_data
+export Box, ChainList, Point, PointList, VertexPairs, corners, expand_box, flat, getbox, inbox, input, scale_box, remove_data_outside_box, smallest_box_containing_data
 
 
 
@@ -163,6 +163,17 @@ mutable struct VertexPairs
     edges::Vector{@NamedTuple{src::Int64, dst::Int64}}   # list of named tuples
     layout::Vector{Point}
 end
+
+##############################################################################
+# Piecewise lines
+
+"""
+   ChainList is a collection of lines, all 
+   of which should be plotted the same color.
+"""
+mutable struct ChainList
+    chains::Vector{PointList}
+end 
 
 
 
