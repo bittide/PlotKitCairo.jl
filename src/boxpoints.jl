@@ -33,7 +33,7 @@ end
 
 eval(makevector(Point))
 
-function Base.:*(A::Matrix, b::Point) 
+function Base.:*(A::Matrix, b::Point)
     return  Point(A[1,1]*b.x + A[1,2]*b.y,  A[2,1]*b.x + A[2,2]*b.y)
 end
 
@@ -142,6 +142,7 @@ PointList(x::Vector{T}) where T <: Tuple = PointList(Point.(x))
 # input returns a vector of pointlists
 input(data::Vector{Point}) = [PointList(data)]
 input(data::Array{Vector{Point}}) = [PointList(p) for p in data[:]]
+input(x::Vector{PointList}) = x
 
 flat(pl::PointList) = pl
 flat(pl::Vector{PointList}) = PointList(reduce(vcat, a.points for a in pl))
@@ -168,12 +169,12 @@ end
 # Piecewise lines
 
 """
-   ChainList is a collection of lines, all 
+   ChainList is a collection of lines, all
    of which should be plotted the same color.
 """
 mutable struct ChainList
     chains::Vector{PointList}
-end 
+end
 
 
 

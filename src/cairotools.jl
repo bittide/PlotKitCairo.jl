@@ -43,18 +43,54 @@ export @m_str
 ##      Cairo.set_dash(ctx, [0.0, 8.0])
 ##      Cairo.set_line_width(ctx, 3)
 ##      Cairo.set_line_cap(ctx, Cairo.CAIRO_LINE_CAP_ROUND)
-##  
+##
 ##      source(ctx, Color(:black))
 ##      Cairo.stroke(ctx)
 ##  end
 
 
+# cap is one of
+#
+# :butt   CAIRO_LINE_CAP_BUTT
+# :round  CAIRO_LINE_CAP_ROUND
+# :square CAIRO_LINE_CAP_SQUARE
+#
+# default is butt
+#
 
-mutable struct LineStyle
+# Cairo dashes Cairo.set_dash(ctx, dashes) Cairo.set_dash(ctx, dashes, offset)
+#
+# Sets the dash pattern to be used by stroke(). A dash pattern is specified by
+# dashes, a sequence of positive values. Each value provides the length of
+# alternate “on” and “off” portions of the stroke. The offset specifies an
+# offset into the pattern at which the stroke begins.
+#
+# Each “on” segment will have caps applied as if the segment were a separate
+# sub-path. In particular, it is valid to use an “on” length of 0.0 with
+# cairo.LineCap.ROUND or cairo.LineCap.SQUARE in order to distributed dots or
+# squares along a path.
+#
+# Note: The length values are in user-space units as evaluated at the time of
+# stroking. This is not necessarily the same as the user space at the time of
+# set_dash().
+#
+# If the number of dashes is 0 dashing is disabled.#
+#
+# If the number of dashes is 1 a symmetric pattern is assumed with alternating on
+# and off portions of the size specified by the single value in dashes.
+#
+#
+#
+
+Base.@kwdef mutable struct LineStyle
     color
     width
+    cap = :butt
+    dashes = []
+    offset = 0.0
 end
 
+LineStyle(c,w) = LineStyle(; color = c, width = w)
 
 ##############################################################################
 # text functions
@@ -90,7 +126,7 @@ function Cairo.text(ctx::CairoContext, p::Point, fsize, fcolor, txt; horizontal 
         dx = left + width
     end
     if vertical == "top"
-        dy = top 
+        dy = top
     elseif vertical == "center"
         dy = top + height/2
     elseif vertical == "bottom"
@@ -262,6 +298,16 @@ Set the linewidth and color of the pen for Cairo.
 function set_linestyle(ctx::CairoContext, ls::LineStyle)
     Cairo.set_line_width(ctx, ls.width)
     source(ctx, ls.color)
+    if length(ls.dashes) > 0
+        Cairo.set_dash(ctx, ls.dashes, ls.offset)
+    end
+    if ls.cap == :butt
+        Cairo.set_line_cap(ctx, Cairo.CAIRO_LINE_CAP_BUTT)
+    elseif ls.cap == :round
+        Cairo.set_line_cap(ctx, Cairo.CAIRO_LINE_CAP_ROUND)
+    elseif ls.cap == :square
+        Cairo.set_line_cap(ctx, Cairo.CAIRO_LINE_CAP_SQUARE)
+    end
 end
 set_linestyle(dw::Drawable, ls::LineStyle) = set_linestyle(dw.ctx, ls)
 
@@ -424,7 +470,7 @@ line(dw::Drawable, p::Point, q::Point; kw...) = line(dw.ctx, p, q; kw...)
 plotpath(x) = x
 
 function title(f)
-    tm = Dates.format(Dates.now(), "H:MM")        
+    tm = Dates.format(Dates.now(), "H:MM")
     return "$(f) $(tm)"
 end
 
