@@ -79,7 +79,11 @@ export @m_str
 # If the number of dashes is 1 a symmetric pattern is assumed with alternating on
 # and off portions of the size specified by the single value in dashes.
 #
+# join is one of
 #
+#  :round Cairo.CAIRO_LINE_JOIN_ROUND
+#  :miter Cairo.CAIRO_LINE_JOIN_MITER   default
+#  :bevel Cairo.CAIRO_LINE_JOIN_BEVEL
 #
 
 Base.@kwdef mutable struct LineStyle
@@ -88,6 +92,7 @@ Base.@kwdef mutable struct LineStyle
     cap = :butt
     dashes = []
     offset = 0.0
+    join = :miter
 end
 
 LineStyle(c,w) = LineStyle(; color = c, width = w)
@@ -308,7 +313,15 @@ function set_linestyle(ctx::CairoContext, ls::LineStyle)
     elseif ls.cap == :square
         Cairo.set_line_cap(ctx, Cairo.CAIRO_LINE_CAP_SQUARE)
     end
+    if ls.join == :miter
+        Cairo.set_line_join(ctx, Cairo.CAIRO_LINE_JOIN_MITER)
+    elseif ls.join == :round
+        Cairo.set_line_join(ctx, Cairo.CAIRO_LINE_JOIN_ROUND)
+    elseif ls.join == bevel
+        Cairo.set_line_join(ctx, Cairo.CAIRO_LINE_JOIN_BEVEL)
+    end
 end
+
 set_linestyle(dw::Drawable, ls::LineStyle) = set_linestyle(dw.ctx, ls)
 
 """
