@@ -164,6 +164,7 @@ mutable struct VertexPairs
     edges::Vector{@NamedTuple{src::Int64, dst::Int64}}   # list of named tuples
     layout::Vector{Point}
 end
+input(x::VertexPairs) = x
 
 ##############################################################################
 # Piecewise lines
