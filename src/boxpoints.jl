@@ -110,7 +110,7 @@ function Base.getproperty(b::Box, s::Symbol)
     end
 end
 
-function Misc.ifnotmissing(a::Box, b::Box)
+function ifnotmissing(a::Box, b::Box)
     return Box(ifnotmissing(a.xmin, b.xmin),
                ifnotmissing(a.xmax, b.xmax),
                ifnotmissing(a.ymin, b.ymin),
@@ -120,7 +120,7 @@ end
 
 
 # if requested limits are finite, use them
-function Misc.iffinite(a::Box, b::Box)
+function iffinite(a::Box, b::Box)
     xmin = iffinite(a.xmin, b.xmin)
     xmax = iffinite(a.xmax, b.xmax)
     ymin = iffinite(a.ymin, b.ymin)
