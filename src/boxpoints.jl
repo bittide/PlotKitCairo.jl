@@ -18,8 +18,11 @@ module BoxPoints
 using LinearAlgebra
 using ..Tools
 using ..Misc
+using JuliaTools
 
-export Box, ChainList, Point, PointList, VertexPairs, corners, expand_box, flat, getbox, inbox, input, scale_box, remove_data_outside_box, smallest_box_containing_data
+export Box, ChainList, Point, PointList, VertexPairs, corners, expand_box,
+    flat, getbox, inbox, input, scale_box,
+    remove_data_outside_box, smallest_box_containing_data
 
 
 
@@ -110,7 +113,7 @@ function Base.getproperty(b::Box, s::Symbol)
     end
 end
 
-function ifnotmissing(a::Box, b::Box)
+function JuliaTools.ifnotmissing(a::Box, b::Box)
     return Box(ifnotmissing(a.xmin, b.xmin),
                ifnotmissing(a.xmax, b.xmax),
                ifnotmissing(a.ymin, b.ymin),
@@ -120,7 +123,7 @@ end
 
 
 # if requested limits are finite, use them
-function iffinite(a::Box, b::Box)
+function JuliaTools.iffinite(a::Box, b::Box)
     xmin = iffinite(a.xmin, b.xmin)
     xmax = iffinite(a.xmax, b.xmax)
     ymin = iffinite(a.ymin, b.ymin)
