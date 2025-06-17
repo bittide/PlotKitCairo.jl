@@ -449,6 +449,37 @@ curve(dw::Drawable, b::Bezier; kw...) = curve(dw.ctx,  b; kw...)
 
 
 
+# These functions are very simple
+# workarounds of Cairo's fixed-point limitation
+# on the size of coordinates.  This could easily cause
+# some figures to be drawn incorrectly.
+function proj1(a::Float64)
+    if a > 400000.0
+        return 400000.0
+    elseif a < -400000.0
+        return -400000.0
+    end
+    return a
+end
+
+function proj1(a::Int64)
+    if a > 400000
+        return 400000
+    elseif a < -400000
+        return -400000
+    end
+    return a
+end
+
+
+# Add this since Cairo uses fixed point
+# coordinates and so will not draw a line
+# if any points exceed this range.
+function proj(p::Point)
+    return Point(proj1(p.x), proj1(p.y))
+end
+
+
 """
     line(ctx, x; closed, linestyle, fillcolor)
 
@@ -457,9 +488,9 @@ Draw a line joining the points in the list of points x.
 function line(ctx::CairoContext, p::Array{Point};
               closed = false, linestyle = nothing, fillcolor = nothing,
               keep = false)
-    Cairo.move_to(ctx, p[1])
+    Cairo.move_to(ctx, proj(p[1]))
     for i=2:length(p)
-        Cairo.line_to(ctx, p[i])
+        Cairo.line_to(ctx, proj(p[i]))
     end
     draw(ctx; closed, linestyle, fillcolor, keep)
 end
