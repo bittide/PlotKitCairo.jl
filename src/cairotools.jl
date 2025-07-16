@@ -305,6 +305,8 @@ function set_linestyle(ctx::CairoContext, ls::LineStyle)
     source(ctx, ls.color)
     if length(ls.dashes) > 0
         Cairo.set_dash(ctx, ls.dashes, ls.offset)
+    else
+        Cairo.set_dash(ctx, Float64[], 0.0)
     end
     if ls.cap == :butt
         Cairo.set_line_cap(ctx, Cairo.CAIRO_LINE_CAP_BUTT)
