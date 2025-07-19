@@ -529,7 +529,7 @@ function addtitle(ad, fname)
 end
 
 # convenient (module-local) global
-addtitlestoplots = true
+addtitlestoplots = false
 
 function titles()
     global addtitlestoplots = true

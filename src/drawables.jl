@@ -109,7 +109,7 @@ function Drawable(width, height; fname = nothing)
     if isnothing(fname)
         return RecorderDrawable(width, height)
     end
-    
+
     if lowercase(fname[end-2:end]) == "png"
         return  ImageDrawable(width, height, fname)
     end
@@ -117,7 +117,7 @@ function Drawable(width, height; fname = nothing)
     if lowercase(fname[end-2:end]) == "svg"
         return SVGDrawable(width, height, fname)
     end
-    
+
     if lowercase(fname[end-2:end]) == "pdf"
         return PDFDrawable(width, height, fname)
     end
@@ -130,7 +130,7 @@ end
 
 Close the Cairo surface and write output.
 """
-function Base.close(dw::Drawable) 
+function Base.close(dw::Drawable)
     finish(dw.surface)
     destroy(dw.surface)
     destroy(dw.ctx)
@@ -148,6 +148,16 @@ end
 # output a RecorderDrawable
 
 
+function set_pdf_metadata_date(surface, datestr)
+    CAIRO_PDF_METADATA_CREATE_DATE = 5
+    ccall((:cairo_pdf_surface_set_metadata, Cairo.libcairo),
+          Cvoid,
+          (Ptr{UInt8}, Cint, Ptr{UInt8}),
+          surface.ptr, CAIRO_PDF_METADATA_CREATE_DATE, String(datestr))
+end
+
+
+
 # output to a context
 # p = location of top-left of r in destination coords
 function Cairo.paint(ctx::CairoContext, r::RecorderDrawable, p = Point(0,0), scalefactor = 1.0)
@@ -163,6 +173,9 @@ Cairo.paint(dest::Drawable, args...) = paint(dest.ctx, args...)
 # output to a file
 function Cairo.save(r::RecorderDrawable, fname, scale=1)
     dw = Drawable(scale*r.width, scale*r.height; fname)
+    if lowercase(fname[end-2:end]) == "pdf"
+       set_pdf_metadata_date(dw.surface, "2001-02-03T04:05+06:00")
+    end
     Cairo.scale(dw.ctx, scale, scale)
     paint(dw, r)
     close(dw)
