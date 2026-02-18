@@ -95,7 +95,7 @@ Base.@kwdef mutable struct LineStyle
     join = :miter
 end
 
-LineStyle(c,w) = LineStyle(; color = c, width = w)
+LineStyle(c, w) = LineStyle(; color=c, width=w)
 
 ##############################################################################
 # text functions
@@ -107,7 +107,7 @@ Returns the Cairo text_extents data giving the dimensions of the text at size fs
 """
 function get_text_info(ctx::CairoContext, fsize, fname, txt)
     Cairo.select_font_face(ctx, fname, Cairo.FONT_SLANT_NORMAL,
-                           Cairo.FONT_WEIGHT_NORMAL)
+        Cairo.FONT_WEIGHT_NORMAL)
     Cairo.set_font_size(ctx, fsize)
     return Cairo.text_extents(ctx, txt)
 end
@@ -121,19 +121,19 @@ Write txt to the Cairo context at point p, with given size and color.
 Here horizontal alignment can be "left", "center", or "right".
 Vertical alignment can be "top", "center", "bottom" or "baseline".
 """
-function Cairo.text(ctx::CairoContext, p::Point, fsize, fcolor, txt; horizontal = "left", vertical="baseline", fname="Sans")
+function Cairo.text(ctx::CairoContext, p::Point, fsize, fcolor, txt; horizontal="left", vertical="baseline", fname="Sans")
     left, top, width, height = get_text_info(ctx, fsize, fname, txt)
     if horizontal == "left"
         dx = left
     elseif horizontal == "center"
-        dx = left + width/2
+        dx = left + width / 2
     elseif horizontal == "right"
         dx = left + width
     end
     if vertical == "top"
         dy = top
     elseif vertical == "center"
-        dy = top + height/2
+        dy = top + height / 2
     elseif vertical == "bottom"
         dy = top + height
     elseif vertical == "baseline"
@@ -153,8 +153,8 @@ Useful for log axes, eg. 10^{-1}. Then basefname = cmr10 and supfname = cmr7
 Also for x^y, use basefname = "cmmi10" and supfname = "cmmi7"
 """
 function text_with_superscript(ad, pos, fsize, fcolor, basestr, expstr;
-                                   basefname = "cmr10", supfname = "cmr7",
-                                   vertical = "baseline", horizontal = "left")
+    basefname="cmr10", supfname="cmr7",
+    vertical="baseline", horizontal="left")
     sh = -0.37
     sup = fsize * Point(0.1, sh)
     num = fsize * Point(0.67, sh)
@@ -162,10 +162,10 @@ function text_with_superscript(ad, pos, fsize, fcolor, basestr, expstr;
 
     # compute extents of base text
     left, top, width, height = get_text_info(ad, fsize, basefname, basestr)
-    if  vertical == "top"
+    if vertical == "top"
         dy = top
     elseif vertical == "center"
-        dy = top + height/2
+        dy = top + height / 2
     elseif vertical == "bottom"
         dy = top + height
     elseif vertical == "baseline"
@@ -175,33 +175,33 @@ function text_with_superscript(ad, pos, fsize, fcolor, basestr, expstr;
     # compute width of superscript other text, (ie with the minus stripped)
     if expstr[1] == '-'
         # get width of minus
-        non_minus_width = get_text_info(ad, 0.7*fsize, supfname, expstr[2:end])[3]
+        non_minus_width = get_text_info(ad, 0.7 * fsize, supfname, expstr[2:end])[3]
         total_width = num.x + non_minus_width
     else
-        super_width = get_text_info(ad, 0.7*fsize, supfname, expstr)[3]
-        total_width =  nominussup.x + super_width
+        super_width = get_text_info(ad, 0.7 * fsize, supfname, expstr)[3]
+        total_width = nominussup.x + super_width
     end
     if horizontal == "left"
         dx = left
     elseif horizontal == "center"
-        dx = left + total_width/2
+        dx = left + total_width / 2
     elseif horizontal == "right"
         dx = total_width
     elseif horizontal == "baseright"  # right of base text
         dx = width
     end
     rpos = pos - Point(dx, dy)
-    text(ad, rpos, fsize, fcolor, basestr; fname = basefname)
+    text(ad, rpos, fsize, fcolor, basestr; fname=basefname)
     # To find the minus sign character
     # go to https://hellogreg.github.io/glytter/
     # upload cmsy10
     # copy the string into julia s= "x"
     # and look at s[1] in the repl
     if expstr[1] == '-'
-        text(ad, rpos + Point(width, 0) + sup, 0.7*fsize,  fcolor, "\u00A1"; fname = "cmsy7")
-        text(ad, rpos + Point(width, 0) + num, 0.7*fsize,  fcolor, expstr[2:end]; fname = supfname)
+        text(ad, rpos + Point(width, 0) + sup, 0.7 * fsize, fcolor, "\u00A1"; fname="cmsy7")
+        text(ad, rpos + Point(width, 0) + num, 0.7 * fsize, fcolor, expstr[2:end]; fname=supfname)
     else
-        text(ad, rpos + Point(width, 0) + nominussup, 0.7*fsize,  fcolor, expstr; fname = supfname)
+        text(ad, rpos + Point(width, 0) + nominussup, 0.7 * fsize, fcolor, expstr; fname=supfname)
     end
 end
 text_with_superscript(dw::Drawable, args...; kw...) = text_with_superscript(dw.ctx, args...; kw...)
@@ -213,7 +213,7 @@ text_with_superscript(dw::Drawable, args...; kw...) = text_with_superscript(dw.c
 Return the Cairo x,y scale factors between device and user space.
 """
 function get_scale(ctx)
-    s = Cairo.device_to_user_distance!(ctx, [1.0,0.0])
+    s = Cairo.device_to_user_distance!(ctx, [1.0, 0.0])
     return s[1], s[2]
 end
 get_scale(dw::Drawable) = get_scale(dw.ctx)
@@ -291,8 +291,8 @@ Cairo.arc(dw::Drawable, p::Point, r, t1, t2) = Cairo.arc(dw.ctx, p, r, t1, t2)
 
 Draw a curve from the current point to p3 with control points p1,p2.
 """
-Cairo.curve_to(ctx::CairoContext, p1::Point, p2::Point, p3::Point) =  Cairo.curve_to(ctx, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
-Cairo.curve_to(dw::Drawable, p1::Point, p2::Point, p3::Point) =  Cairo.curve_to(dw.ctx, p1, p2, p3)
+Cairo.curve_to(ctx::CairoContext, p1::Point, p2::Point, p3::Point) = Cairo.curve_to(ctx, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
+Cairo.curve_to(dw::Drawable, p1::Point, p2::Point, p3::Point) = Cairo.curve_to(dw.ctx, p1, p2, p3)
 
 
 """
@@ -381,8 +381,8 @@ textx(dw::Drawable, p::Point, fsize, color, fname, txt) = textx(dw.ctx, p, fsize
 
 Fill and/or stroke the current Cairo path.
 """
-function draw(ctx::CairoContext; closed = false, linestyle = nothing,
-              fillcolor = nothing, keep = false)
+function draw(ctx::CairoContext; closed=false, linestyle=nothing,
+    fillcolor=nothing, keep=false)
     if closed
         Cairo.close_path(ctx)
     end
@@ -402,7 +402,7 @@ function draw(ctx::CairoContext; closed = false, linestyle = nothing,
         Cairo.new_path(ctx)
     end
 end
-draw(dw::Drawable; kw...) = draw(dw.ctx, kw...)
+draw(dw::Drawable; kw...) = draw(dw.ctx; kw...)
 
 ##############################################################################
 # elementary
@@ -413,13 +413,13 @@ draw(dw::Drawable; kw...) = draw(dw.ctx, kw...)
 Draw a rectangle with top-left corner at p and width-height given by wh.
 
 """
-function rect(ctx::CairoContext, p::Point, wh::Point; linestyle = nothing, fillcolor = nothing)
+function rect(ctx::CairoContext, p::Point, wh::Point; linestyle=nothing, fillcolor=nothing)
     rectangle(ctx, p, wh)
-    draw(ctx; closed = true, linestyle, fillcolor)
+    draw(ctx; closed=true, linestyle, fillcolor)
 end
 rect(dw::Drawable, p::Point, wh::Point; kw...) = rect(dw.ctx, p, wh; kw...)
 
-rect(ctx::CairoContext, b::Box;  linestyle = nothing, fillcolor = nothing) = rect(ctx, Point(b.xmin, b.ymin), Point(b.xmax - b.xmin, b.ymax - b.ymin); linestyle, fillcolor)
+rect(ctx::CairoContext, b::Box; linestyle=nothing, fillcolor=nothing) = rect(ctx, Point(b.xmin, b.ymin), Point(b.xmax - b.xmin, b.ymax - b.ymin); linestyle, fillcolor)
 rect(dw::Drawable, b::Box; kw...) = rect(dw.ctx, b; kw...)
 
 """
@@ -427,9 +427,9 @@ rect(dw::Drawable, b::Box; kw...) = rect(dw.ctx, b; kw...)
 
 Draw a circle centered at p with radius r.
 """
-function Cairo.circle(ctx::CairoContext, p::Point, r; linestyle = nothing, fillcolor = nothing)
+function Cairo.circle(ctx::CairoContext, p::Point, r; linestyle=nothing, fillcolor=nothing)
     Cairo.new_sub_path(ctx)
-    Cairo.arc(ctx, p, r, 0, 2*pi)
+    Cairo.arc(ctx, p, r, 0, 2 * pi)
     draw(ctx; closed=true, linestyle, fillcolor)
 end
 Cairo.circle(dw::Drawable, p, r; kw...) = circle(dw.ctx, p, r; kw...)
@@ -440,14 +440,14 @@ Cairo.circle(dw::Drawable, p, r; kw...) = circle(dw.ctx, p, r; kw...)
 Draw a cubic curve with control points p0, p1, p2, p3.
 """
 function curve(ctx::CairoContext, p0, p1, p2, p3;
-               closed = false, linestyle = nothing, fillcolor = nothing)
+    closed=false, linestyle=nothing, fillcolor=nothing)
     Cairo.move_to(ctx, p0)
     Cairo.curve_to(ctx, p1, p2, p3)
     draw(ctx; closed, linestyle, fillcolor)
 end
 curve(ctx::CairoContext, b::Bezier; kw...) = curve(ctx, b.p0, b.p1, b.p2, b.p3; kw...)
-curve(dw::Drawable, p0, p1, p2, p3; kw...) = curve(dw.ctx,  p0, p1, p2, p3; kw...)
-curve(dw::Drawable, b::Bezier; kw...) = curve(dw.ctx,  b; kw...)
+curve(dw::Drawable, p0, p1, p2, p3; kw...) = curve(dw.ctx, p0, p1, p2, p3; kw...)
+curve(dw::Drawable, b::Bezier; kw...) = curve(dw.ctx, b; kw...)
 
 
 
@@ -488,10 +488,10 @@ end
 Draw a line joining the points in the list of points x.
 """
 function line(ctx::CairoContext, p::Array{Point};
-              closed = false, linestyle = nothing, fillcolor = nothing,
-              keep = false)
+    closed=false, linestyle=nothing, fillcolor=nothing,
+    keep=false)
     Cairo.move_to(ctx, proj(p[1]))
-    for i=2:length(p)
+    for i = 2:length(p)
         Cairo.line_to(ctx, proj(p[i]))
     end
     draw(ctx; closed, linestyle, fillcolor, keep)
@@ -503,7 +503,7 @@ line(dw::Drawable, p::Array{Point}; kw...) = line(dw.ctx, p; kw...)
 
 Draw a line from Point p to Point q on the Cairo context ctx.
 """
-function line(ctx::CairoContext, p::Point, q::Point; linestyle = nothing)
+function line(ctx::CairoContext, p::Point, q::Point; linestyle=nothing)
     Cairo.move_to(ctx, p)
     Cairo.line_to(ctx, q)
     draw(ctx; linestyle)
@@ -521,9 +521,9 @@ function title(f)
 end
 
 function addtitle(ad, fname)
-    ad2 = RecorderDrawable(min(200, ad.width),18)
-    rect(ad2.ctx, Point(0,0), Point(ad2.width, ad2.height); fillcolor = Color(0.9,1.0,1.0,0.7))
-    text(ad2.ctx, Point(2,13), 10, Color(0,0,0,0.7),  fname)
+    ad2 = RecorderDrawable(min(200, ad.width), 18)
+    rect(ad2.ctx, Point(0, 0), Point(ad2.width, ad2.height); fillcolor=Color(0.9, 1.0, 1.0, 0.7))
+    text(ad2.ctx, Point(2, 13), 10, Color(0, 0, 0, 0.7), fname)
     ad3 = offset(ad, ad2, 0, 0)
     return ad3
 end
@@ -539,7 +539,7 @@ function notitles()
     global addtitlestoplots = false
 end
 
-function qsave(ad, fname; scale = 4)
+function qsave(ad, fname; scale=4)
     println("saving $fname")
     if addtitlestoplots
         ad2 = addtitle(ad, title(fname))
