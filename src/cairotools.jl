@@ -277,6 +277,8 @@ Cairo.line_to(ctx::CairoContext, p::Point) = Cairo.line_to(ctx, p.x, p.y)
 Cairo.line_to(dw::Drawable, p::Point) = Cairo.line_to(dw.ctx, p)
 
 
+Cairo.new_path(dw::Drawable) = Cairo.new_path(dw.ctx)
+
 """
     arc(ctx, p, r, t1, t2)
 
@@ -284,6 +286,9 @@ Draw a Cairo arc of radius r, centered at p, starting at angle t1, ending angle 
 """
 Cairo.arc(ctx::CairoContext, p::Point, r, t1, t2) = Cairo.arc(ctx, p.x, p.y, r, t1, t2)
 Cairo.arc(dw::Drawable, p::Point, r, t1, t2) = Cairo.arc(dw.ctx, p, r, t1, t2)
+
+Cairo.arc_negative(ctx::CairoContext, p::Point, r, t1, t2) = Cairo.arc_negative(ctx, p.x, p.y, r, t1, t2)
+Cairo.arc_negative(dw::Drawable, p::Point, r, t1, t2) = Cairo.arc_negative(dw.ctx, p, r, t1, t2)
 
 
 """
